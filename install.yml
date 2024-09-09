@@ -1,0 +1,33 @@
+---
+- name: deploy
+  hosts: localhost
+  become: yes
+  tasks:
+    - name: install_apache
+      shell: ./install_apache.sh
+      tags:
+        - deploy
+
+- name: un-deploy
+  hosts: localhost
+  become: yes
+  tasks:
+    - name: un-deploy webserver
+      service:
+        name: apache2
+        state: stopped
+      tags:
+        - undeploy
+    - name: remove apache2
+      apt:
+        name: apache2
+        state: absent
+      tags:
+        - undeploy
+
+    - name: remove index.html
+      file:
+        path: /var/www/html/index.html
+        state: absent
+      tags:
+        - undeploy
